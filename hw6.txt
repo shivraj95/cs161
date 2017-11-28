@@ -1,0 +1,139 @@
+Author: Shivraj Gill
+ID: 704-344-118
+
+
+1. 
+	a) {x/A, y/B, z/B}
+    b) Unifier does not exist
+    c) {x/B, y/A}
+    d) {x/John, y/John}
+    e) Unifier Does not exist
+ 
+
+
+ 2. 
+	1. John likes all kinds of food.
+	2. Apples are food.
+	3. Chicken is food.
+	4. Anything anyone eats and isn't killed by is food.
+	5. If you are killed by something, you are not alive.
+	6. Bill eats peanuts and is still alive. 
+	7. Sue eats everything Bill eats.
+
+	a) Translate these sentences into FOL  
+		
+		1. A x (Food(x)) => likes(John, x)
+        2. Food(apple)
+        3. Food(chicken)
+        4. A x A y (eats(x, y) & ~killed_by(x, y)) => Food(y) 
+        5. A x A y (killed_by(x, y)) => ~alive(x)
+        6. eats(Bill, peanuts) & alive(Bill)
+        7. (A x) (eats(Bill, x)) => eats(Sue, x)
+    
+
+    b) Convert above sentences to CNF
+
+    	1. ~Food(x) | likes(John, x)
+        2.  Food(apple)
+        3.  Food(chicken)
+        4. ~eats(x, y) | killed_by(x, y) | Food(y)
+        5. ~killed_by(x, y) | ~alive(x)
+        6.  eats(Bill, peanuts) & alive(Bill)
+        7. ~eats(Bill, x) | eats(Sue, x)
+    
+    (c) Add ~likes(John, peanuts) to KB and if we reach a contradiction, then KB shows that likes(John, peanuts) is true
+
+    	8.  ~likes(John, peanuts)
+        9.  ~Food(peanuts) 							  (From 1 & 8)
+        10. ~eats(x, peanuts) | killed-by(x, peanuts) (From 4 & 9)
+        11.  alive(Bill) 							  (From 6)
+        12.  killed-by(Bill, peanuts) 				  (From 6 & 10)
+        13. ~alive(Bill) 							  (From 12, 5)
+        14.  Contradiction from 11 & 13
+        
+        Since we've reached a contradiction, the KB proves that likes(John, peanuts) is true.
+    
+    (d) What food does Sue eat? 
+
+    	We can say there exists a food that Susan eats: (E x) (food(x) & eats(Sue, x)), 
+    	then when we can answer the question by adding the negation to our KB.
+    	
+    	That is ~((E x) (food(x) & eats(Sue, x))) which is equivalent to ~food(x) | ~eats(Sue, x)
+
+        8.  ~food(x) | ~eats(Sue, x) 
+        9.  ~food(x) | ~eats(Bill, x) (From 7 & 8)
+        10. ~food(peanuts) 			  (From 9) (letting x = peanutes)
+        11.  alive(Bill) 			  (From 6)
+        12.  eats(Bill, peanutes)	  (From 6)
+        13.  killed_by(Bill, peanuts)  (From 4 & 10)
+        14. ~alive(Bill) 			  (From 5 & 13)
+        15.  Contradiction from 11 & 14
+        
+        Since we've reached a contradiction, the KB proves that (E x) (food(x) & eats(Sue, x)) is true 
+        when x = peanuts, so Sue eats peanuts.
+    
+    (e) 
+    	6. If you don’t eat, you die 
+		6a. (A x) (~(E y) eats(x, y)) => dead(x)
+		6b. (A x) ((E y) (eats(x, y))) | dead(x)
+		6c. (A x) (eats(x, y)) | dead(x)
+		6d. eats(x, y) | dead(x)
+
+		8. If you die, you are not alive. 
+		8a. (A x) (dead(x)) => ~alive(x)
+		8b. ~dead(x) | ~alive(x)
+
+		9. Bill is alive
+		9a. alive(Bill)
+
+		We will add 6d, 8b, and 9a to our KB. And ask the same question: What does Sue eat?
+
+		KB:
+		1. ~Food(x) | likes(John, x)
+        2.  Food(apple)
+        3.  Food(chicken)
+        4. ~eats(x, y) | killed_by(x, y) | Food(y)
+        5. ~killed_by(x, y) | ~alive(x)
+        6.  eats(x, y) | dead(x)
+        7. ~eats(Bill, x) | eats(Sue, x)
+        8. ~dead(x) | ~alive(x)
+        9. alive(Bill)
+
+		Using the same conversion from 8d), we add ~food(x) | ~eats(Sue, x) to our knowledge base, and check for a contradiction. 
+
+		10. ~food(z) | ~eats(Sue, z) 
+		11. ~food(z) | ~eats(Bill, z)      (From 7 & 10)
+        12. ~food(z) | dead(Bill) 	       (From 6 & 11)
+        13. ~food(z) | ~alive(Bill)        (From 8 & 12)
+        14. ~food(z) 				  	   (From 9 & 13)
+        15. ~eats(x, z) | killed_by(x, z)  (From 4 & 14)
+        16. ~eats(x, z) | ~alive(x) 	   (From 5 & 15)
+        17. ~eats(Bill, z)  			   (From 9 & 16)
+        18.  dead(Bill) 				   (From 6 & 17)
+        19. ~alive(Bill) 				   (From 8 & 18)
+        20.  Contradiction from 9 & 19
+
+        Since we've reached a contradiction, the KB proves that (E x) (food(x) & eats(Sue, x)) is true for any x, so Sue eats all food.
+
+
+3)
+Q: Is graph 1 satisfiable with 3 colors? Is it satisfiable with 4 colors?
+A: Coloring Graph 1 with the 3 colors instance is not satisfiable. However, coliring graph 1 with 4 colors is satisfiable.  
+
+Q: What  do  the  answers  of  these  two  SAT  instances  tell  you  about  the  graph coloring problem of the graph?
+A: The answers tell us that graph 1 must be colored with at least 4 colors. 
+
+
+Q: Can you give a solution (a coloring) to the graph coloring problem of the above graph based on the results of RSat?
+A: 
+    Node    Color
+     1       1
+     2       2
+     3       1
+     4       4
+     5       3
+     6       2
+     7       3 
+
+Q: What is the minimum number of colors required to properly color graph 2?
+A: We need at least 8 colors to color graph 2 for it to be satisfiable. 
